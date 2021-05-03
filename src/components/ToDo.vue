@@ -8,9 +8,7 @@
   <div class="all-tasks" v-if="showTask">
     <div v-for = "(task , index) in allTasks"  :key="task.task" class="parent" @click="mark(index)">
       <span :class="{ done: task.done }"> {{ task.task }} </span>
-      <!-- <button @click="removeTodo(index)" class="close">remove</button> -->
-      <!-- <button @click="mark(index)">{{ task.completion }}</button> -->
-      <img src="../../x-mark-32.png" class="cross" height="8" @click="removeTodo(index)">
+      <img src="../../assets/cross.png" class="cross" height="8" @click="removeTodo(index)">
     </div>
   </div>
 </template>
