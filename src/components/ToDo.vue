@@ -5,48 +5,78 @@
       <input type="button" value="Add Task" @click="taskAdd" class="add-task-btn">
     </form>
   </div>
-  <div class="all-tasks" v-if="showTask">
-    <div v-for = "(task , index) in allTasks"  :key="task.task" class="parent" @click="mark(index)">
-      <span :class="{ done: task.done }"> {{ task.task }} </span>
-      <img src="../../assets/cross.png" class="cross" height="8" @click="removeTodo(index)">
+  <div class="all-tasks">
+    <div v-for = " (el , index) in allTasks"  :key="el.id" class="parent">
+      <span :class="{ done: el.completion }" @click="mark(el.id , index)"> {{ el.task }} </span>
+      <div class="delete" @click="removeTodo(el.id , index)">
+        <img src="../../assets/cross.png" class="cross" height="8">
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+//Linking to the database and some basic crud functions
+import {retriveAllData , pushData , completionMark , deleteData} from "./link"
+import { firestoreDb } from "../db/firebasedb"
+
 export default {
   name : "ToDo" ,
+  props:["Tasks"],
   data() {
     return {
-      task : '' , 
-      showTask : false,
-      allTasks : []
+      task : '',
+      allTasks: this.Tasks
     }
-  } , 
+  },
   methods: {
     taskAdd() {
       if (this.task != '') {
-        this.showTask = true
-        this.allTasks.push(
-        {"task" : this.task ,
-        "done" : false , 
-        "completion" : "Mark Done"})
+        let currTask = {
+          "task":this.task,
+          "completion":false
+        }
+        this.allTasks.push(currTask)
+        pushData(currTask)
+        .then(()=>console.log("Added to doc"))
+        .catch(err=>console.log(err))
       }
       this.task = ''
-     } , 
-
-    removeTodo(index){
+    },
+    removeTodo(id , index){
       this.allTasks.splice(index , 1)
-    } ,
-
-    mark(index) {
-      if(this.allTasks[index].completion === "Mark Done") this.allTasks[index].completion = "Unmark"
-      else this.allTasks[index].completion = "Mark Done"
-      this.allTasks[index].done = !this.allTasks[index].done
+      deleteData(id)
+      .then(()=>console.log("Deletion Done"))
+      .catch(err=>console.log(err))
+    },
+    mark(id , index) {
+      this.allTasks[index].completion = !this.allTasks[index].completion
+      let mark = this.allTasks[index].completion
+      completionMark(id , mark)
+      .then(()=>console.log("Marking Done"))
+      .catch(err=>console.log(err))
+    },
+  },
+  mounted(){
+    if(this.allTasks === undefined || this.Tasks.length === 0){
+      retriveAllData().then(res=> this.allTasks = res) 
     }
-  }  
+    //Check Lol Worlks
+    //.onSnapshot used for realtime updating the database
+    firestoreDb.collection("todo").onSnapshot((doc)=>{
+      let tasks = []
+      doc.forEach(obj=>{
+        tasks.push({
+          "id":obj.id,
+          "task":obj.data().task,
+          "completion":obj.data().completion
+        })
+      })
+      this.allTasks = tasks
+    })
+  }
+}  
 
-}
 </script>
 
 <style>
@@ -109,21 +139,29 @@ export default {
 
 .parent span {
   padding: 10px 15px;
+  cursor: pointer;
 }
 .parent:hover{
-  cursor: pointer;
   opacity: 1;
   box-shadow: 4px 4px 6px 0px rgba(0 , 0 , 0 , .25);
 
 }
 .cross{
-  position: absolute;
-  right: 2%;
+  position: relative;
+  right: 5%;
   top:15%; 
 }
 
 .cross:hover {
   cursor: pointer;
 
+}
+.delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 }
 </style>

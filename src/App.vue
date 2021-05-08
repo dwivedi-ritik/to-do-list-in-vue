@@ -1,21 +1,28 @@
 <template>
-  <h3>TO DO LIST IN VUE</h3>
+  <h3 >TO DO LIST IN VUE</h3>
   <button @click="showComp" class="start-btn">{{ btnKnown }}</button>
   <!-- To Do list component rendered to the App -->
-  <ToDo v-if="helloWorld"/>
+  <ToDo :Tasks=Tasks v-if="helloWorld"/>
 </template>
 
 // <script>
 import ToDo from './components/ToDo'
+import MyComp from './components/MyComp'
+import { retriveAllData } from "./components/link"
+import { firestoreDb } from "./db/firebasedb"
+
+// firestoreDb.collection("todo").onSnapshot((doc)=>{
+//   doc.forEach(obj=>console.log(obj.data()))
+// })
+
 export default {
   name: 'App',
-  components: {
-    ToDo
-  } ,
+  components: {ToDo , MyComp} ,
   data() {
     return {
       helloWorld : false ,
-      btnKnown : "Show App"
+      btnKnown : "Show App",
+      Tasks:[]
     }
   } ,
   methods: {
@@ -24,7 +31,13 @@ export default {
       if( this.btnKnown === "Close App" ) this.btnKnown = "Show App"
       else this.btnKnown = "Close App"
       return 
-    }
+    } ,
+
+  },
+  mounted(){
+      retriveAllData().then(res=> {
+        this.Tasks = res
+      })
   }
 }
 </script>

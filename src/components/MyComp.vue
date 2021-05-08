@@ -1,36 +1,21 @@
 <template>
-    <form class="inp-form">
-        <input placeholder="Enter Your task" v-model="usrInp" id="form">
-        <input type="submit" v-on:click="task" id="form-btn">
-    </form>
+    <button @click="response()">retrive db</button>
 </template>
 
 <script>
 
+import {retriveAllData , pushData} from "./link"
 export default {
-    data(){
-        return {
-            usrInp:''
-        }    
-    } , 
     methods : {
-        
-        //Function for getting form input
-        task(e){
-            this.usrInp = ''
-            e.preventDefault()
-        }
+        response() {
+            pushData()
+            .then(obj=>console.log(obj))
+        }       
     }
 }
+
 </script>
 
 <style scoped>
-#form {
-    height: 40px;
-    font-size: 12px;
-    border: none;
-    border-radius: 15px;
-}
-
 </style>
 
