@@ -5,14 +5,10 @@
   <ToDo :Tasks=Tasks v-if="helloWorld"/>
 </template>
 
-// <script>
+<script>
 import ToDo from './components/ToDo'
 import MyComp from './components/MyComp'
 import { retriveAllData } from "./components/link"
-
-// firestoreDb.collection("todo").onSnapshot((doc)=>{
-//   doc.forEach(obj=>console.log(obj.data()))
-// })
 
 export default {
   name: 'App',

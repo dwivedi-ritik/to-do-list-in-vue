@@ -68,6 +68,7 @@ export default {
       let tasks = []
       doc.forEach(obj=>{
         tasks.push({
+          "id": obj.id,
           "task":obj.data().task,
           "completion":obj.data().completion,
           "created_at": obj.data().created_at
