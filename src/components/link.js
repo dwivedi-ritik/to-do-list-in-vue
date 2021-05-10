@@ -2,12 +2,13 @@ import { firestoreDb } from "../db/firebasedb"
 
 async function retriveAllData() {
     let tasks = []
-    const todo = await firestoreDb.collection("todo").get()
+    const todo = await firestoreDb.collection("todo").orderBy("created_at" , "asc").get()
     todo.docs.forEach(obj=>{
         tasks.push({
             "id":obj.id,
             "task":obj.data().task,
-            "completion":obj.data().completion
+            "completion":obj.data().completion,
+            "created_at":obj.data().created_at
         })
     })
     return tasks

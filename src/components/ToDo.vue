@@ -18,7 +18,7 @@
 <script>
 //Linking to the database and some basic crud functions
 import {retriveAllData , pushData , completionMark , deleteData} from "./link"
-import { firestoreDb } from "../db/firebasedb"
+import { firestoreDb, timeStamp } from "../db/firebasedb"
 
 export default {
   name : "ToDo" ,
@@ -34,7 +34,8 @@ export default {
       if (this.task != '') {
         let currTask = {
           "task":this.task,
-          "completion":false
+          "completion":false,
+          "created_at":timeStamp()
         }
         this.allTasks.push(currTask)
         pushData(currTask)
@@ -63,13 +64,13 @@ export default {
     }
     //Check Lol Worlks
     //.onSnapshot used for realtime updating the database
-    firestoreDb.collection("todo").onSnapshot((doc)=>{
+    firestoreDb.collection("todo").orderBy("created_at" , "asc").onSnapshot((doc)=>{
       let tasks = []
       doc.forEach(obj=>{
         tasks.push({
-          "id":obj.id,
           "task":obj.data().task,
-          "completion":obj.data().completion
+          "completion":obj.data().completion,
+          "created_at": obj.data().created_at
         })
       })
       this.allTasks = tasks

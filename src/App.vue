@@ -9,7 +9,6 @@
 import ToDo from './components/ToDo'
 import MyComp from './components/MyComp'
 import { retriveAllData } from "./components/link"
-import { firestoreDb } from "./db/firebasedb"
 
 // firestoreDb.collection("todo").onSnapshot((doc)=>{
 //   doc.forEach(obj=>console.log(obj.data()))
@@ -37,6 +36,7 @@ export default {
   mounted(){
       retriveAllData().then(res=> {
         this.Tasks = res
+        console.log(res)
       })
   }
 }
